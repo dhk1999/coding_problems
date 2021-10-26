@@ -1,0 +1,109 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <tuple>
+#include <vector>
+#include <cmath>
+
+class CTurret
+{
+private:
+	int32_t testCase;
+	// x좌표, y좌표, 거리
+	std::vector<std::tuple <int, int, int>> jo;
+	std::vector<std::tuple <int, int, int>> ry;
+	std::vector<int> result;
+public:
+	CTurret();
+	~CTurret();
+	void userInput();
+	void solve();
+	void print();
+	double measureDistance(int x1, int y1, int x2, int y2);
+
+};
+
+CTurret::CTurret() {
+	// constructor
+};
+
+CTurret::~CTurret() {
+	// destructor
+};
+
+void CTurret::userInput() {
+	std::cin.tie(NULL);
+	std::ios::sync_with_stdio(false);
+
+	std::cin >> testCase;
+	std::cin.clear();
+	std::cin.ignore();
+
+	for (int32_t i = 0; i < testCase; i++)
+	{
+		std::string inputStr;
+		int per[6] = {0, };
+		std::getline(std::cin, inputStr);
+		std::stringstream ss(inputStr);
+
+		for (int i = 0; i < 6; i++)
+		{
+			ss >> per[i];
+		}
+
+		jo.push_back(std::make_tuple(per[0], per[1], per[2]));
+		ry.push_back(std::make_tuple(per[3], per[4], per[5]));
+	}
+};
+
+void CTurret::solve()
+{
+	for (int32_t i = 0; i < testCase; i++)
+	{
+		int methodNumber = 0;
+		int radiusTotal = std::get<2>(jo.at(i)) + std::get<2>(ry.at(i));
+		int radiusSub = std::abs(std::get<2>(jo.at(i)) - std::get<2>(ry.at(i)));
+		double dis = measureDistance(std::get<0>(jo.at(i)), std::get<1>(jo.at(i)), std::get<0>(ry.at(i)), std::get<1>(ry.at(i)));
+		if (dis < radiusTotal && dis > radiusSub)
+			methodNumber = 2;
+		else if ((dis == radiusSub & dis != 0) || dis == radiusTotal)
+			methodNumber = 1;
+		else if (dis < radiusSub | dis > radiusTotal)
+			methodNumber = 0;
+		else if (dis == 0)
+		{
+			if (std::get<2>(jo.at(i)) == std::get<2>(ry.at(i)))
+				methodNumber = -1;
+			else
+				methodNumber = 0;
+		}
+		result.push_back(methodNumber);
+	}
+}
+
+double CTurret::measureDistance(int x1, int y1, int x2, int y2)
+{
+	int xdis = std::abs(x1 - x2);
+	int ydis = std::abs(y1 - y2);
+
+	double result = sqrt(xdis * xdis + ydis * ydis);
+
+	return result;
+}
+
+void CTurret::print()
+{
+	for (int32_t i = 0; i < testCase; i++)
+	{
+		std::cout << result.at(i) << '\n';
+	}
+}
+
+int main()
+{
+	CTurret* cTurret = new CTurret();
+	cTurret->userInput();
+	cTurret->solve();
+	cTurret->print();
+	delete cTurret;
+}
